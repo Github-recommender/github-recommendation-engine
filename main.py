@@ -28,6 +28,11 @@ def login():
         password = str(request.form['password'])
         user = glin(username, password=password).user()
         print user.name
+        return render_template("recommendation.html")
+
+@app.route("/recommendation")
+def recommendation():
+    return render_template("recommendation.html ")
 
 if __name__ == "__main__":
     app.run(debug = True)
