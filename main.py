@@ -1,5 +1,7 @@
 from flask import Flask,flash,render_template,redirect,url_for,json,make_response,request
 from github3 import login as glin
+from helpers import create_user_profile
+from multiprocessing import Pool
 
 
 app = Flask(__name__)
@@ -26,13 +28,16 @@ def login():
     if request.method == 'POST':
         username = str(request.form['user'])
         password = str(request.form['password'])
-        user = glin(username, password=password).user()
-        print user.name
+        user = glin(username, password=password)
+        #username =  user.name
+        create_user_profile(user)
+        #pool = Pool(processes=1)
+        #pool.apply_async(create_user_profile,[username])
         return render_template("recommendation.html")
 
 @app.route("/recommendation")
 def recommendation():
-    return render_template("recommendation.html ")
+    return render_template("recommendation.html")
 
 if __name__ == "__main__":
     app.run(debug = True)
