@@ -29,11 +29,14 @@ def login():
         username = str(request.form['user'])
         password = str(request.form['password'])
         user = glin(username, password=password)
-        #username =  user.name
         create_user_profile(user)
-        #pool = Pool(processes=1)
-        #pool.apply_async(create_user_profile,[username])
         return render_template("recommendation.html")
+
+
+@app.route("/api/recommendation")
+def apiRecommendation():
+    pass
+
 
 @app.route("/recommendation")
 def recommendation():
