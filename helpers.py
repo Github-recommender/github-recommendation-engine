@@ -40,7 +40,7 @@ def build_model(user):
 
 def insert_train_data(user):
     kill = 0
-    KILL = 12
+    KILL = 24
     client = MongoClient()
     db = client.github
     repositories = db.repositories
@@ -72,8 +72,7 @@ def insert_train_data(user):
                 }
                 no_of_stars = len(list(rep.iter_stargazers()))
                 for l in languages:
-                    if l[0] in languages_list:
-                            summ=summ+int(l[1])
+                    summ=summ+int(l[1])
 
                 langs = {}
                 
