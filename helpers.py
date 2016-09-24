@@ -41,11 +41,13 @@ def build_model(user):
 
 def insert_train_data(user):
     kill = 0
-    KILL = 2
+    KILL = 12
     client = MongoClient()
     db = client.github
     repositories = db.repositories
-    for f in user.iter_followers():
+    user1 = user.user()
+    my_followers = (list(user1.iter_followers()))
+    for f in my_followers:
         if kill == KILL:
             break
         user2=user.user(f)
@@ -55,6 +57,7 @@ def insert_train_data(user):
                 break
             user3 = user.user(ff)
 
+            #if ff not in my_followers:
             repo = list(user.iter_user_repos(user3))
             for rep in repo:
                 kill = kill + 1
@@ -67,6 +70,7 @@ def insert_train_data(user):
                     "repoName" : rep.full_name,
                     "languages":{}
                 }
+                no_of_stars = len(list(rep.iter_stargazers()))
                 for l in languages:
                     if l[0] in languages_list:
                             summ=summ+int(l[1])
@@ -80,6 +84,7 @@ def insert_train_data(user):
                         else:
                             langs.update({locallangs:str(0)})
                 dictrepo["languages"] = langs
+                dictrepo["stars"] = no_of_stars
                 repositories.insert_one(dictrepo)
     build_model(user)
 
@@ -90,11 +95,13 @@ def insert_repos(user, repos):
     for r in repos:
         #print r.full_name
         repo = {
-            r.full_name:{
-
-            }
+            r.full_name:{}
+        }
+        repoDetails = {
+            "languages":{}
         }
         languages = list(r.iter_languages())
+        no_of_stars = len(list(r.iter_stargazers()))
         sum=0
         Lang = {}
         for l in languages:
@@ -102,7 +109,9 @@ def insert_repos(user, repos):
         for l in languages:
             Lang = {l[0]:float(l[1])/sum}
             dictLang.update(Lang)
-        repo[r.full_name] = dictLang
+        repoDetails["languages"] = dictLang
+        repoDetails["stars"] = no_of_stars
+        repo[r.full_name] = repoDetails
         dictLang = {}
         #print repo
         dictRepos.update(repo)
