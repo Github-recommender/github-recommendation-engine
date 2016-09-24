@@ -10,7 +10,6 @@ client = MongoClient()
 db = client.github
 users = db.users
 users.ensure_index('username',unique=True)
-languages_list = ['', 'Shell', 'Java', 'HTML', 'Python', 'JavaScript', 'CSS', 'C']
 
 def build_model(user):
     #with open('languages.csv','rb') as f:
@@ -45,6 +44,7 @@ def insert_train_data(user):
     client = MongoClient()
     db = client.github
     repositories = db.repositories
+    Languages = db.languages
     user1 = user.user()
     my_followers = (list(user1.iter_followers()))
     for f in my_followers:
@@ -76,17 +76,13 @@ def insert_train_data(user):
                             summ=summ+int(l[1])
 
                 langs = {}
-                for locallangs in languages_list:
-                    for l in languages:
-                        if l[0]==locallangs:
-
-                            langs.update({l[0]:str(l[1]/float(summ))})
-                        else:
-                            langs.update({locallangs:str(0)})
+                
+                for l in languages:
+                        langs.update({l[0]:str(l[1]/float(summ))})
                 dictrepo["languages"] = langs
                 dictrepo["stars"] = no_of_stars
                 repositories.insert_one(dictrepo)
-    build_model(user)
+    #build_model(user)
 
 def insert_repos(user, repos):
     username = user.user().login
